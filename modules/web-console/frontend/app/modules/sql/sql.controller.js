@@ -1778,10 +1778,16 @@ export default ['$rootScope', '$scope', '$http', '$q', '$timeout', '$interval', 
 
                 const tab = '&nbsp;&nbsp;&nbsp;&nbsp;';
 
-                while (_.nonNil(cause)) {
-                    const clsName = _.isEmpty(cause.className) ? '' : '[' + JavaTypes.shortClassName(cause.className) + '] ';
+                const addToTrace = (item) => {
+                    const clsName = _.isEmpty(item.className) ? '' : '[' + JavaTypes.shortClassName(item.className) + '] ';
 
-                    scope.content.push((scope.content.length > 0 ? tab : '') + clsName + cause.message);
+                    scope.content.push((scope.content.length > 0 ? tab : '') + clsName + item.message);
+                };
+
+                while (_.nonNil(cause)) {
+                    addToTrace(cause);
+
+                    _.forEach(cause.suppressed, (sup) => addToTrace(sup));
 
                     cause = cause.cause;
                 }
